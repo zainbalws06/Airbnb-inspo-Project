@@ -7,9 +7,11 @@ const Listing = require("./models/listing");
 const path = require("path");
 const MONGO_URL = process.env.MONGO_URL;
 const methoOverride = require("method-override");
+const ejsMate = require("ejs-mate");
 
 //Middlewares
 app.set("view engine", "ejs");
+app.engine("ejs", ejsMate);
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
