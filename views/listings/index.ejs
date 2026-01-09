@@ -1,18 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+<%- include("../partials/header") %>
     <h1>Listings</h1>
   <%   for(listing of allListings){  %>
     <ul>
       <li><a href="/listings/<%= listing._id %>"><%= listing.title %> </a> </li></ul>
     <% }  %>
-    <form method="get" action="/listings/new">
-        <button>Add New </button>
-    </form>
-</body>
-</html>
+<%- include("../partials/footer") %>
