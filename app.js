@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 require("dotenv").config();
-const port = 8080;
+const PORT = process.env.PORT || 8080;
 const Listing = require("./models/listing");
 const path = require("path");
 const MONGO_URL = process.env.MONGO_URL;
@@ -16,6 +16,17 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(methoOverride("_method"));
+//DB Connection
+async function main() {
+  try {
+    await mongoose.connect(MONGO_URL);
+    console.log("connected to db");
+  } catch (error) {
+    console.log("connection to db failed");
+  }
+}
+main();
+
 //ROUTES
 app.get("/", (req, res) => {
   res.send("please visit /listings, this route not available anymore for now");
@@ -87,6 +98,6 @@ main()
     console.log(err);
   });
 
-app.listen(port, () => {
-  console.log("server started");
+app.listen(PORT, () => {
+  console.log("server is listening");
 });
