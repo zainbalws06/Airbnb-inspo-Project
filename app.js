@@ -8,6 +8,7 @@ const path = require("path");
 const MONGO_URL = process.env.MONGO_URL;
 const methoOverride = require("method-override");
 const ejsMate = require("ejs-mate");
+const listingsRoutes = require("./routes/listingsRoutes");
 
 //Middlewares
 app.set("view engine", "ejs");
@@ -16,6 +17,29 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(methoOverride("_method"));
+app.use((req, res, next) => {
+  console.log(`Request received: ${req.method} ${req.url}`);
+  next();
+});
+
+//ROUTES
+app.use("/listings", listingsRoutes);
+app.get("/", (req, res) => {
+  res.redirect("/listings");
+});
+
+//LISTEN
+function listen() {
+  try {
+    app.listen(PORT, () => {
+      console.log("listening to the server");
+    });
+  } catch (err) {
+    console.log(err);
+  }
+}
+listen();
+
 //DB Connection
 async function main() {
   try {
@@ -27,66 +51,6 @@ async function main() {
 }
 main();
 
-//ROUTES
-app.get("/", (req, res) => {
-  res.send("This route is under some developement, please visit /listings");
-});
-app.get("/listings", async (req, res) => {
-  let allListings = await Listing.find();
-  res.render("listings/index.ejs", { allListings });
-});
-
-app.get("/listings/new", async (req, res) => {
-  res.render("listings/new.ejs");
-});
-app.get("/listings/:id", async (req, res) => {
-  let { id } = req.params;
-  let listing = await Listing.findById(id);
-  res.render("listings/listing.ejs", { listing });
-});
-app.post("/listings", async (req, res) => {
-  console.log(req.body);
-  let { title, description, image, price, location, country } = req.body;
-  let newListing = await Listing.create({
-    title: title,
-    description: description,
-    image: image,
-    price: price,
-    location: location,
-    country: country,
-  });
-  await newListing.save();
-
-  console.log("saved");
-  res.redirect("/listings");
-});
-app.get("/listings/:id/edit", async (req, res) => {
-  let { id } = req.params;
-  console.log(id);
-  let listing = await Listing.findById(id);
-  res.render("listings/edit.ejs", { listing });
-  console.log(listing);
-});
-app.put("/listings/:id", async (req, res) => {
-  let { id } = req.params;
-  let { title, description, image, price, location, country } = req.body;
-  let updatedListing = await Listing.findByIdAndUpdate(id, {
-    title: title,
-    description: description,
-    image: image,
-    price: price,
-    location: location,
-    country: country,
-  });
-  console.log(`${updatedListing} updated`);
-  res.redirect(`/listings/${id}`);
-});
-app.delete("/listings/:id", async (req, res) => {
-  let { id } = req.params;
-  let deletedListing = await Listing.findByIdAndDelete(id);
-  console.log(`${deletedListing} deleted`);
-  res.redirect("/listings");
-});
 async function main() {
   await mongoose.connect(MONGO_URL);
 }
@@ -97,7 +61,3 @@ main()
   .catch((err) => {
     console.log(err);
   });
-
-app.listen(PORT, () => {
-  console.log("server is listening");
-});
