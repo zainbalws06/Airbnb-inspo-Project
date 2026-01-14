@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 8080;
 const Listing = require("./models/listing");
 const path = require("path");
 const MONGO_URL = process.env.MONGO_URL;
-const methoOverride = require("method-override");
+const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const listingsRoutes = require("./routes/listingsRoutes");
 
@@ -16,7 +16,7 @@ app.engine("ejs", ejsMate);
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
-app.use(methoOverride("_method"));
+app.use(methodOverride("_method"));
 app.use((req, res, next) => {
   console.log(`Request received: ${req.method} ${req.url}`);
   next();
