@@ -8,6 +8,7 @@ const MONGO_URL = process.env.MONGO_URL;
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const listingsRoutes = require("./routes/listingsRoutes");
+const cors = require("cors");
 
 //SETTINGS
 app.set("view engine", "ejs");
@@ -15,6 +16,7 @@ app.engine("ejs", ejsMate);
 app.set("views", path.join(__dirname, "views"));
 
 //GLOBAL MIDDLEWARES
+app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
